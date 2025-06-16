@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ApiError.class})
-    public ResponseEntity<Object> HandleApiError(ApiError apiError) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError.getMessage());
+    @ExceptionHandler({DecliviaException.class})
+    public ResponseEntity<DecliviaError> HandleApiError(DecliviaException apiError) {
+
+        return new ResponseEntity<DecliviaError>(new DecliviaError(apiError.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

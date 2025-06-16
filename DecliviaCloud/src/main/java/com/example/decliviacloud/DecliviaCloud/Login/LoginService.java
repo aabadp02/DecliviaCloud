@@ -1,8 +1,8 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
-import com.example.decliviacloud.DecliviaCloud.System.Exceptions.ApiError;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
+import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +21,14 @@ public class LoginService {
      * @return El usuario logueado
      * @throws Exception Si las credenciales no son correctas
      */
-    public LoginResponse Login(LoginRequest loginRecord) throws ApiError {
+    public LoginResponse Login(LoginRequest loginRecord) throws DecliviaException {
 
         // Buscamos al usuario según sus credenciales
         UserRecord user = userService.FindUserByCredentials(loginRecord.userName(), loginRecord.password());
 
         // Si no se encuentra, quiere decir que el login ha sido incorrecto, por lo que lanzamos una excepción
         if(user == null){
-            throw new ApiError("Usuario o contraseña incorrectos");
+            throw new DecliviaException("Usuario o contraseña incorrectos");
         }
 
         // En caso de que exista, devolvemos el usuario

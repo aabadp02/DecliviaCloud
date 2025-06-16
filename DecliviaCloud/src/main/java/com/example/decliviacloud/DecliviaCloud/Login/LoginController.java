@@ -1,6 +1,6 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
-import com.example.decliviacloud.DecliviaCloud.System.Exceptions.ApiError;
+import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
 import com.example.decliviacloud.DecliviaCloud.System.Responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class LoginController {
      * @return true si son correctas las credenciales y false si no.
      */
     @RequestMapping(value = "api/login", method = RequestMethod.POST)
-    public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) throws ApiError
+    public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) throws DecliviaException
     {
         // Nos logueamos
         LoginResponse loginResponse = loginService.Login(loginRequest);
