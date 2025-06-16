@@ -13,12 +13,4 @@ public class UserController {
     public UserRecord FindUserById(@PathVariable int id) {
         return new UserRecord(1, "", "", "", false);
     }
-
-    @RequestMapping(value = "api/users", method = RequestMethod.POST)
-    public int CreateUser(@RequestBody UserRecord user) throws Exception {
-
-        User userEntity = UserMapper.ConvertRecordToUser(user);
-
-        return userService.CreateUser(userEntity);
-    }
 }

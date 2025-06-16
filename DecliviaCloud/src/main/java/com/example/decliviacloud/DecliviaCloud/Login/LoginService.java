@@ -19,7 +19,7 @@ public class LoginService {
      * de la API
      * @param loginRecord: Dto con las credenciales del usuario que se está logueando
      * @return El usuario logueado
-     * @throws Exception Si las credenciales no son correctas
+     * @throws DecliviaException Si las credenciales no son correctas
      */
     public LoginResponse Login(LoginRequest loginRecord) throws DecliviaException {
 
@@ -33,5 +33,20 @@ public class LoginService {
 
         // En caso de que exista, devolvemos el usuario
         return new LoginResponse(user.userName(), "prueba-token");
+    }
+
+    /**
+     * Método para registrar un nuevo usuario en la aplicación
+     * @param signInRequest: objeto con los datos necesarios para crear el nuevo usuario
+     * @return El id del usuario usuario que acabamos de crear
+     * @throws DecliviaException: Excepción que saltará en caso de que los datos introducidos sean de un usuario ya existente
+     */
+    public int SignIn(SignInRequest signInRequest) throws DecliviaException{
+
+        // Creamos un objeto de tipo usuario con los datos que nos han llegado en el sign in
+        UserRecord user = new UserRecord(null, signInRequest.userName(), signInRequest.email(), signInRequest.password(), false);
+
+        // Llamamos al servicio de usurios para persistir el nuevo usuario
+        return userService.CreateUser(user);
     }
 }

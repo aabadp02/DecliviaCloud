@@ -1,5 +1,6 @@
 package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
+import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,15 +8,23 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public int CreateUser(User user) throws Exception {
+    /**
+     * Método para crear un usuario
+     * @param user record con lso datos el usuario que se queire crear
+     * @return El id del usuario usuario que acabamos de crear
+     * @throws DecliviaException: Excepción que salta si las credenciales ya se han utilizado en alguno de los usuarios creados
+     */
+    public int CreateUser(UserRecord user) throws DecliviaException {
 
-        if (!userRepository.existsByUserNameOrEmail(user.getUserName(), user.getEmail())) {
-            return userRepository.save(user).getId();
+        // Comprobamos que no exista ya un usuario con ese nombre o emial y si no existe, lo creamos
+        if (user != null && !userRepository.existsByUserNameOrEmail(user.userName(), user.email())) {
+            return userRepository.save(UserMapper.ConvertRecordToUser(user)).getId();
         }
 
-        throw new Exception("$Ya existe un usuario con las mismas credenciales");
+        // En caso de que ya exista, lanzamos excepción indicándolo
+        throw new DecliviaException("El nombre de usuario o el email ya están en uso");
     }
 
     /**

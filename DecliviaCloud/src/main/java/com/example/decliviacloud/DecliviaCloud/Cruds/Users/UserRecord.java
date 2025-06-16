@@ -1,3 +1,3 @@
 package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
-public record UserRecord(int Id, String userName, String email, String password, boolean isAdmin) { }
+public record UserRecord(Integer Id, String userName, String email, String password, boolean isAdmin) { }

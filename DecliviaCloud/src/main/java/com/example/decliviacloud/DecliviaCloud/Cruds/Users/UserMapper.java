@@ -27,7 +27,10 @@ public class UserMapper {
 
         User result = new User();
 
-        result.setId(userRecord.Id());
+        if(userRecord != null && userRecord.Id() != null) {
+            result.setId(userRecord.Id());
+        }
+
         result.setUserName(userRecord.userName());
         result.setEmail(userRecord.email());
         result.setPassword((userRecord.password()));

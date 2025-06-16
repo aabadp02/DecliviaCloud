@@ -32,4 +32,22 @@ public class LoginController {
         // Devolvemos la respuesta del login (el nombre de usuario y el token) junto con un código 200
         return new ResponseEntity<ApiResponse<LoginResponse>>(new ApiResponse<>(loginResponse, "Login correcto"), HttpStatus.OK);
     }
+
+    /**
+     * Endpoint para poder registrar un usuario en la aplicación
+     * De momento solo devuelve un 200 ok si ha salido bien o una excepción en caso de que no
+     * TODO: Estudiar si devolver el id del usaurio que se acaba de crear
+     * @param signInRequest: Record con los datos del usuario que se quiere registrar dentro de la aplicación
+     * @return: El id del usuario que se acaba de crear si sale bien
+     * @throws DecliviaException: Excepción que saltará si los datos introducidos ya se están utilizando en algún usuario existente
+     */
+    @RequestMapping(value = "api/signin", method = RequestMethod.POST)
+    public ResponseEntity<ApiResponse<Integer>> SignIn(@RequestBody SignInRequest signInRequest) throws DecliviaException
+    {
+        // Creamos el usuario y almacenamos el id del nuevo usuario creado
+        int userId = loginService.SignIn(signInRequest);
+
+        // TODO: Devolver el id del usuario que se acaba de crear
+        return new ResponseEntity<ApiResponse<Integer>>(new ApiResponse<>(userId, "El usuarios e ha registrado correctamente"), HttpStatus.OK);
+    }
 }
