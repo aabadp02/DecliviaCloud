@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.Responses;
+package com.example.decliviacloud.DecliviaCloud.System.Responses;
 
 public record ApiResponse<T>(
         T Response,

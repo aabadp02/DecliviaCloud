@@ -1,8 +1,8 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
-import com.example.decliviacloud.DecliviaCloud.Exceptions.ApiError;
-import com.example.decliviacloud.DecliviaCloud.Users.UserRecord;
-import com.example.decliviacloud.DecliviaCloud.Users.UserService;
+import com.example.decliviacloud.DecliviaCloud.System.Exceptions.ApiError;
+import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
+import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

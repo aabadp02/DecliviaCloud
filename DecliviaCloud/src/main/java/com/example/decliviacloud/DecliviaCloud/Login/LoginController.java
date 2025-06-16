@@ -1,7 +1,7 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
-import com.example.decliviacloud.DecliviaCloud.Exceptions.ApiError;
-import com.example.decliviacloud.DecliviaCloud.Responses.ApiResponse;
+import com.example.decliviacloud.DecliviaCloud.System.Exceptions.ApiError;
+import com.example.decliviacloud.DecliviaCloud.System.Responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

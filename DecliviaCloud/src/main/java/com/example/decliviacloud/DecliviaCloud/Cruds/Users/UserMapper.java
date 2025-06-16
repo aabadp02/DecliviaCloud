@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.Users;
+package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
 public class UserMapper {
 

@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.Users;
+package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

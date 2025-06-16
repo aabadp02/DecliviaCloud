@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.Exceptions;
+package com.example.decliviacloud.DecliviaCloud.System.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * ¡OJO! No confundir con la clase ApiException.
  * Esta clase servirá para devolver errores controlados al usuario
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ApiError extends RuntimeException {
-
     public ApiError(String exceptionMessage) {
         super(exceptionMessage);
     }
