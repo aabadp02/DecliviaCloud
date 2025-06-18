@@ -1,5 +1,7 @@
 package com.example.decliviacloud.DecliviaCloud.System.Exceptions;
 
+import java.util.List;
+
 /**
  * Clase para definir una respuesta de error de la aplicación.
  * ¡OJO! No confundir con DecliviaException.

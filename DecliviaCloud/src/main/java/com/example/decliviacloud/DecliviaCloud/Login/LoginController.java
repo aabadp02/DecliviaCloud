@@ -1,7 +1,9 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
+import com.example.decliviacloud.DecliviaCloud.System.Responses.AddResponse;
 import com.example.decliviacloud.DecliviaCloud.System.Responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class LoginController {
      * @return true si son correctas las credenciales y false si no.
      */
     @RequestMapping(value = "api/login", method = RequestMethod.POST)
-    public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) throws DecliviaException
+    public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody @Valid LoginRequest loginRequest) throws DecliviaException
     {
         // Nos logueamos
         LoginResponse loginResponse = loginService.Login(loginRequest);
@@ -42,12 +44,15 @@ public class LoginController {
      * @throws DecliviaException: Excepción que saltará si los datos introducidos ya se están utilizando en algún usuario existente
      */
     @RequestMapping(value = "api/signin", method = RequestMethod.POST)
-    public ResponseEntity<ApiResponse<Integer>> SignIn(@RequestBody SignInRequest signInRequest) throws DecliviaException
+    public ResponseEntity<ApiResponse<AddResponse>> SignIn(@RequestBody @Valid SignInRequest signInRequest) throws DecliviaException
     {
         // Creamos el usuario y almacenamos el id del nuevo usuario creado
         int userId = loginService.SignIn(signInRequest);
 
-        // TODO: Devolver el id del usuario que se acaba de crear
-        return new ResponseEntity<ApiResponse<Integer>>(new ApiResponse<>(userId, "El usuarios e ha registrado correctamente"), HttpStatus.OK);
+        // Incluimos el id en el objeto de respuesta de creación para devolver el id del usuario que se acaba de registrar
+        AddResponse addResponse = new AddResponse(userId);
+
+        // Si todo ha salido bien devolvemos un 200 OK con el id del usuario que acabamos de crear
+        return new ResponseEntity<ApiResponse<AddResponse>>(new ApiResponse<AddResponse>(addResponse, "El usuario se ha registrado correctamente"), HttpStatus.OK);
     }
 }

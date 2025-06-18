@@ -14,6 +14,6 @@ public record ApiResponse<T>(
         String ApiVersion
 ){
     public ApiResponse(T Response, String ApiMessage){
-        this(Response, ApiMessage,"v 0.0.1");
+        this(Response, ApiMessage,"0.0.1");
     }
 }
