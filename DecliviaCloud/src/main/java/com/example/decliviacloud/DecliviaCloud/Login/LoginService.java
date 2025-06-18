@@ -3,6 +3,8 @@ package com.example.decliviacloud.DecliviaCloud.Login;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,9 @@ public class LoginService {
 
     @Autowired
     UserService userService;
+
+    // Definimos el logger para poder escribir logs en el servicio
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     /**
      * Método para loguearse en la aplicación.

@@ -1,6 +1,9 @@
 package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
+import com.example.decliviacloud.DecliviaCloud.Login.LoginService;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +12,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    // Definimos el logger para poder escribir logs en el servicio
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      * Método para crear un usuario
@@ -20,7 +26,9 @@ public class UserService {
 
         // Comprobamos que no exista ya un usuario con ese nombre o emial y si no existe, lo creamos
         if (user != null && !userRepository.existsByUserNameOrEmail(user.userName(), user.email())) {
-            return userRepository.save(UserMapper.ConvertRecordToUser(user)).getId();
+            int id = userRepository.save(UserMapper.ConvertRecordToUser(user)).getId();
+            logger.info("Se ha creado el usuario " + user.userName() + " con id: " + id);
+            return id;
         }
 
         // En caso de que ya exista, lanzamos excepción indicándolo
