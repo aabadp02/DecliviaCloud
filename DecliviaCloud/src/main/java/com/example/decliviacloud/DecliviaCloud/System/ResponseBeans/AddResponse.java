@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.System.Responses;
+package com.example.decliviacloud.DecliviaCloud.System.ResponseBeans;
 
 /**
  * Objeto genérico que se devuelve como respuesta cuando se produce la creación de un recurso.

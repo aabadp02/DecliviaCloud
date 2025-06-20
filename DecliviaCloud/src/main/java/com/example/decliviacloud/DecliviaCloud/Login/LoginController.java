@@ -1,8 +1,8 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
-import com.example.decliviacloud.DecliviaCloud.System.Responses.AddResponse;
-import com.example.decliviacloud.DecliviaCloud.System.Responses.ApiResponse;
+import com.example.decliviacloud.DecliviaCloud.System.ResponseBeans.AddResponse;
+import com.example.decliviacloud.DecliviaCloud.System.ApiResponses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

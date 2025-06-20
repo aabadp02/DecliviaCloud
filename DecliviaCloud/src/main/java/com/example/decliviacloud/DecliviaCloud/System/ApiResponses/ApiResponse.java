@@ -1,4 +1,4 @@
-package com.example.decliviacloud.DecliviaCloud.System.Responses;
+package com.example.decliviacloud.DecliviaCloud.System.ApiResponses;
 
 /**
  * Clase para definir las respuests exitosas de la aplicación.

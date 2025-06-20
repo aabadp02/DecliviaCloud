@@ -10,12 +10,16 @@ import java.util.List;
  *
  * TODO: Incluir un mensaje de admin/téncico con la traza completa de la excepción cuando el usuario es admin.
  *
- * @param ErrorMessage: Mensaje de error
- * @param ApiVersion: Versión de la API
+ * @param errorMessage: Mensaje de error
+ * @param errorTrace: Traza del error (traza de la excepción). Este mensaje solo debería verlo un técnico. SOlo se debería rellenar si el usaurio es de tipo admin
  */
-public record DecliviaError(
-        String ErrorMessage,
-        String ApiVersion) {
+public record DecliviaError(String errorMessage, String errorTrace) {
 
-    public DecliviaError(String ErrorMessage) { this(ErrorMessage, "0.0.1"); };
+    /**
+     * Constructor para indicar solamente el mensaje de error.
+     * Este mensaje es el que verá el usuario final
+     * @param errorMessage
+     */
+    public DecliviaError(String errorMessage) { this(errorMessage, null);}
+
 }
