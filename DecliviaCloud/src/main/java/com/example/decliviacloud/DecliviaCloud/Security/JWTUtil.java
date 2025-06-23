@@ -23,11 +23,23 @@ public class JWTUtil {
     }
 
     /**
+     * Método para sacar el claim del token que corresponde al nombre de usuario.
+     * @param token: Token jwt del que sacaremos el nombre del usuario
+     * @return: Nombre del usuario contenido en el token
+     */
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(getKey()).build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    /**
      * Método para generar el token jwt que contendrá cierta información, como el nombre del usuario
      * para el cuál se ha creado el token o el flag para saber si se trata de un usuario administrador o no.
      * TODO: Incluir los roles en los claims cuando los haya.
-     * @param username
-     * @param isAdmin
+     * @param username: Nombre del usuario para el que se general token
+     * @param isAdmin: flag que introduciremos como claim en el token
      * @return
      */
     public String generateToken(String username, boolean isAdmin) {

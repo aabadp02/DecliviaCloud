@@ -53,4 +53,22 @@ public class UserService {
         // Si no existe, devolvemos null
         return null;
     }
+
+    /**
+     * Método para devolver un usuario a través del nombre del usuario
+     * @param userName
+     * @return
+     */
+    public UserRecord FindUserByUserName(String userName) {
+        // Hacemos la búsqueda del usuario según las credenciales
+        User user = userRepository.getByUserName(userName);
+
+        // Si el usuario existe, lo mapeamos al record y lo devolvemos
+        if(user != null) {
+            return UserMapper.ConvertUserToRecord(user);
+        }
+
+        // Si no existe, devolvemos null
+        return null;
+    }
 }

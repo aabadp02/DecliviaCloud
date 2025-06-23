@@ -1,5 +1,7 @@
 package com.example.decliviacloud.DecliviaCloud.Login;
 
+import com.example.decliviacloud.DecliviaCloud.Cruds.Sessions.SessionRecord;
+import com.example.decliviacloud.DecliviaCloud.Cruds.Sessions.SessionService;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import com.example.decliviacloud.DecliviaCloud.Security.JWTUtil;
@@ -17,6 +19,9 @@ public class LoginService {
 
     @Autowired
     JWTUtil jwtUtil;
+
+    @Autowired
+    private SessionService sessionService;
 
     // Definimos el logger para poder escribir logs en el servicio
     private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
@@ -42,6 +47,9 @@ public class LoginService {
 
         // En caso de que el login haya sido correcto, generamos un jwt y lo devolvemos
         String token = jwtUtil.generateToken(user.userName(), user.isAdmin());
+
+        // Guardamos la sesión
+        sessionService.OpenSession(new SessionRecord(null, user, token));
 
         // En caso de que exista, devolvemos el usuario
         return new LoginResponse(user.userName(), token);

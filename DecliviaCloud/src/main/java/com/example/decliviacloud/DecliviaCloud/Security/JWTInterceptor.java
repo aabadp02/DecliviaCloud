@@ -1,5 +1,6 @@
 package com.example.decliviacloud.DecliviaCloud.Security;
 
+import com.example.decliviacloud.DecliviaCloud.Cruds.Sessions.SessionService;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import com.example.decliviacloud.DecliviaCloud.System.ApiResponses.ApiError;
@@ -27,6 +28,9 @@ public class JWTInterceptor extends OncePerRequestFilter {
 
     @Autowired
     JWTUtil jwtUtil;
+
+    @Autowired
+    SessionService sessionService;
 
     @Autowired
     UserService userService;
@@ -60,6 +64,15 @@ public class JWTInterceptor extends OncePerRequestFilter {
         }
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     * @throws DecliviaException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, DecliviaException {
 
@@ -77,24 +90,34 @@ public class JWTInterceptor extends OncePerRequestFilter {
                 String token = authHeader.substring(7);
 
                 if (jwtUtil.validateToken(token)) {
-                    filterChain.doFilter(request, response);
-//                    String username = jwtUtil.getUsernameFromToken(token);
-//                    UserRecord userDetails = userService.FindUserByUserName(username);
-//
-//                    if(userDetails != null) {
-//                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-//                                userDetails, null, userDetails.getAuthorities());
-//                    }
-//
-//                    Authentication
-//                    SecurityContextHolder.getContext().setAuthentication();
+
+                    // Obtenemos el usuario de la base de datos
+                    String username = jwtUtil.getUsernameFromToken(token);
+                    UserRecord user = userService.FindUserByUserName(username);
+
+                    if(user == null) {
+                        logger.error("El usuario {}no existe", username);
+                        ReturnApiError("Ha ocurrido un error inesperado", response);
+                        return;
+                    }
+
+                    // Validamos si el token existe para el usaurio
+                    if(sessionService.ValidateTokenByUser(user, token)) {
+                        filterChain.doFilter(request, response);
+                    }
+                    else {
+                        ReturnApiError("La sesión no es válida", response);
+                        return;
+                    }
                 }
                 else {
                     ReturnApiError("El token no es válido", response);
+                    return;
                 }
             }
             else {
                 ReturnApiError("No se ha provisto un token", response);
+                return;
             }
         }
     }
