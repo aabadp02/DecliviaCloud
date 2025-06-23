@@ -1,6 +1,5 @@
 package com.example.decliviacloud.DecliviaCloud.Cruds.Users;
 
-import com.example.decliviacloud.DecliviaCloud.Login.LoginService;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,6 +2,7 @@ package com.example.decliviacloud.DecliviaCloud.Login;
 
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
+import com.example.decliviacloud.DecliviaCloud.Security.JWTUtil;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,9 @@ public class LoginService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    JWTUtil jwtUtil;
 
     // Definimos el logger para poder escribir logs en el servicio
     private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
@@ -36,8 +40,11 @@ public class LoginService {
             throw new DecliviaException("Usuario o contraseña incorrectos");
         }
 
+        // En caso de que el login haya sido correcto, generamos un jwt y lo devolvemos
+        String token = jwtUtil.generateToken(user.userName(), user.isAdmin());
+
         // En caso de que exista, devolvemos el usuario
-        return new LoginResponse(user.userName(), "prueba-token");
+        return new LoginResponse(user.userName(), token);
     }
 
     /**

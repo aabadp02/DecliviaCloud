@@ -1,6 +1,5 @@
 package com.example.decliviacloud.DecliviaCloud.System.Exceptions;
 
-import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import com.example.decliviacloud.DecliviaCloud.System.ApiResponses.ApiError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +27,13 @@ public class GlobalExceptionHandler {
      * @return: Un ResponseEntity de tipo DecliviaError que tiene un formato concreto para devolver los errores de la aplicación
      */
     @ExceptionHandler({DecliviaException.class})
-    public ResponseEntity<ApiError> HandelApiException(DecliviaException decliviaException) {
+    public ResponseEntity<ApiError> HandleDecliviaException(DecliviaException decliviaException) {
 
         // Creamos una lista de errores que solamente contiene el mensaje de la excepción
         List<DecliviaError> errorList = new ArrayList<>(List.of(new DecliviaError(decliviaException.getMessage())));
 
         // Devolvemos un ApiError que contiene la lista de errores
-        return new ResponseEntity<>(new ApiError(errorList), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiError(errorList), decliviaException.getHttpStatusCode());
     }
 
     /**
