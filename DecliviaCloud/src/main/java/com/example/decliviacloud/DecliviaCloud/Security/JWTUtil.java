@@ -1,10 +1,10 @@
 package com.example.decliviacloud.DecliviaCloud.Security;
 
-import com.example.decliviacloud.DecliviaCloud.Login.LoginService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
@@ -12,8 +12,13 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final String secret = "clave-super-secreta-de-al-menos-32-caracteres!";
-    private final long expirationMs = 3600000; // 1 hora
+    // Extraemos el secret para generar tokens del archivo properties
+    @Value("${jwt.secret}")
+    private String secret;
+
+    // Extraemos el tiempo de expiración del archivo properties
+    @Value("${jwt.expiration}")
+    private long expirationMs;
 
     // Definimos el logger para poder escribir logs en el servicio
     private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);

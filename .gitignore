@@ -1,2 +1,3 @@
 # Ignorar archivos de configuración sensibles
 /DecliviaCloud/src/main/resources/application.properties
+/DecliviaCloud/src/main/resources/spy.properties
