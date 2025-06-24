@@ -2,6 +2,7 @@ package com.example.decliviacloud.DecliviaCloud.Cruds.Sessions;
 
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserMapper;
 import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserRecord;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class SessionService {
      * En caso de que ya hubiese una abierta, la eliminará y la sustituirá.
      * @param sessionRecord
      */
+    @Transactional
     public void OpenSession(SessionRecord sessionRecord) {
 
         if(sessionRecord != null){
@@ -42,6 +44,7 @@ public class SessionService {
             if(sessionRepository.getByUser(session.getUser()) != null) {
 
                 sessionRepository.deleteByUser(session.getUser());
+                sessionRepository.flush();
             }
 
             // Guardamos la nueva sesión del usuario

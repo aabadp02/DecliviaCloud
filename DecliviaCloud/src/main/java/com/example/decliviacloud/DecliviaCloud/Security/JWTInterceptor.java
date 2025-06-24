@@ -6,7 +6,6 @@ import com.example.decliviacloud.DecliviaCloud.Cruds.Users.UserService;
 import com.example.decliviacloud.DecliviaCloud.System.ApiResponses.ApiError;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaError;
 import com.example.decliviacloud.DecliviaCloud.System.Exceptions.DecliviaException;
-import com.example.decliviacloud.DecliviaCloud.System.Exceptions.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,19 +39,23 @@ public class JWTInterceptor extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
 
+    private final String AUTHORIZATION_HEADER = "Authorization";
+
+    private final String BEARER_PREFIX = "Bearer ";
+
     /**
      * Método para deolver un ApiError desde el interceptor.
      * Necesitamos esto porque en este punto del programa no interviene el GlobalExceptionHandler,
      * por lo que si tratamos de hacer saltar una excepción, no la capturará y no se devolverá como un ApiErro estándard
-     * @param errorMessage: mensaje de error que queremos añadir a la excepción
+     * @param exception: excepción que querremos convertir a un ApiError
      * @param response: objeto response para poder devolver el error
      */
-    private void ReturnApiError(String errorMessage, HttpServletResponse response) {
+    private void ReturnApiError(Exception exception, HttpServletResponse response) {
         // Creamos una lista de errores que solamente contiene el mensaje de la excepción
-        List<DecliviaError> errorList = new ArrayList<>(List.of(new DecliviaError(errorMessage)));
+        List<DecliviaError> errorList = new ArrayList<>(List.of(new DecliviaError(exception.getMessage())));
         ApiError error = new ApiError(errorList);
 
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json");
 
         try {
@@ -61,6 +64,72 @@ public class JWTInterceptor extends OncePerRequestFilter {
         }
         catch(Exception e) {
             logger.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * Método para extraer el token de la request enviada por el usuario
+     * @param request : request http enviada a través de la API
+     * @return
+     * @throws DecliviaException
+     */
+    private String extractTokenFromRequest(HttpServletRequest request) throws DecliviaException {
+
+        // Extraemos la cabezar "authorization" del mensaje http, ya que ahí se encuentra el token
+        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+
+        // El token viene dado por "Bearer token", así que lo extraemos descartando dicho prefijo
+        if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
+
+            String token = authHeader.substring(7);
+
+            return token;
+        }
+        else {
+            throw new DecliviaException("No se ha provisto ningún token");
+        }
+    }
+
+    /**
+     * Método para comprobar si el token existe en nuestra base de datos y que corresponde al usuario contenido dentro del token
+     * @param token
+     * @return
+     */
+    private boolean verifyTokenExists(String token) throws DecliviaException {
+
+        // Extraemos el usuario que viene en el token
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        // Sacamos el usuario de la base de datos
+        UserRecord user = userService.FindUserByUserName(username);
+
+        // Verificamos que el usuario exista en nuestra base de datos
+        if(user == null) {
+            logger.error("El usuario '{}' no existe", username);
+
+            throw new DecliviaException("Ha ocurrido un error inesperado");
+        }
+
+        return sessionService.ValidateTokenByUser(user, token);
+    }
+
+    /**
+     * Función para validar que el token que nos llega es correcto, tanto en su forma, como
+     * si existe dentro de la base de datos y pertenece realmente al usuario indicado.
+     * @param token
+     * @throws DecliviaException
+     */
+    private void validateToken(String token) throws DecliviaException
+    {
+        // Validamos que el token sea correcto (que no se haya intentado modificar desde fuera y que sea un token válido dada nuestra clave de generación, etc)
+        if(!jwtUtil.validateToken(token)) {
+            throw new DecliviaException("El token no es válido");
+        }
+
+        // Verificamos que el token exista en nuestra base de datos y corresponda al usuario contenido dentro dle mimso
+        if(!verifyTokenExists(token)) {
+            throw new DecliviaException("La sesión no es válida");
         }
     }
 
@@ -74,51 +143,37 @@ public class JWTInterceptor extends OncePerRequestFilter {
      * @throws DecliviaException
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, DecliviaException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // lista de URLs para las que NO querremos validar el token cuando se hagan peticiones.
+        // Por ejemplo: no querremos validr el token durante el login porque, obviamente, en ese punto el usuario aún no tiene token
         List<String> excludePaths = List.of("/api/login", "/api/signin");
 
+        // Si se trata de una de las urls indicadas para no validar el token, simplemente dejamos pasar la request para que llegue al controlador correspondiente
         if (excludePaths.contains(request.getServletPath())) {
             filterChain.doFilter(request, response);
         }
         else {
 
-            String authHeader = request.getHeader("Authorization");
+            // Extraemos el token de la request
+            String token = extractTokenFromRequest(request);
 
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            try {
 
-                String token = authHeader.substring(7);
-
-                if (jwtUtil.validateToken(token)) {
-
-                    // Obtenemos el usuario de la base de datos
-                    String username = jwtUtil.getUsernameFromToken(token);
-                    UserRecord user = userService.FindUserByUserName(username);
-
-                    if(user == null) {
-                        logger.error("El usuario {}no existe", username);
-                        ReturnApiError("Ha ocurrido un error inesperado", response);
-                        return;
-                    }
-
-                    // Validamos si el token existe para el usaurio
-                    if(sessionService.ValidateTokenByUser(user, token)) {
-                        filterChain.doFilter(request, response);
-                    }
-                    else {
-                        ReturnApiError("La sesión no es válida", response);
-                        return;
-                    }
-                }
-                else {
-                    ReturnApiError("El token no es válido", response);
-                    return;
-                }
+                // Validamos el token
+                validateToken(token);
             }
-            else {
-                ReturnApiError("No se ha provisto un token", response);
+            // ¡OJO! Capturaramos la excepción aquí ya que en este punto de la aplicación el GlobalExceptionHanlder no interviene.
+            // Por lo tanto, nos encargamos manualmente de capturar la excepción y devolver un APIError
+            catch (Exception e) {
+
+                ReturnApiError(e, response);
+
                 return;
             }
+
+            // Si ha salido todo bien, dejamos pasar la request al controlador correspondiente
+            filterChain.doFilter(request, response);
         }
     }
 }
